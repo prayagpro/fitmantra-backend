@@ -1,0 +1,4 @@
+flask
+flask_cors
+opencv-python  # If using video processing
+gunicorn  # Required for deployment
