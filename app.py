@@ -1,7 +1,6 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import pyttsx3
 import threading
 import queue
 from flask import Flask, render_template, Response, jsonify
@@ -10,9 +9,6 @@ app = Flask(__name__)
 
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
-engine = pyttsx3.init()
-
-speech_queue = queue.Queue()  # Queue for speech messages
 
 # Global variables for squat counting
 counter = 0
@@ -75,21 +71,6 @@ def reset_counter():
     global counter
     counter = 0
     return jsonify({"message": "Counter reset!"})
-
-# Speech worker to process queued messages
-def speech_worker():
-    while True:
-        text = speech_queue.get()
-        if text:
-            engine.say(text)
-            engine.startLoop(False)  # Start loop without blocking
-            while engine._inLoop:
-                engine.iterate()
-        speech_queue.task_done()
-
-# Start speech synthesis in a separate thread
-speech_thread = threading.Thread(target=speech_worker, daemon=True)
-speech_thread.start()
 
 if __name__ == '__main__':
     app.run(debug=True)
